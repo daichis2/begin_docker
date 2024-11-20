@@ -9,10 +9,12 @@
     - [コンテナ内のデータの永続化](#コンテナ内のデータの永続化)
         - [方法1: ボリューム](#方法1-ボリューム)
         - [方法2: バインドマウント](#方法2-バインドマウント)
-- [Dockerfileでイメージを作ってみる](#Dockerfileでイメージを作ってみる)
-    - [Dockerfileに記述できる主な命令](#Dockerfileに記述できる主な命令)
--  [Docker Composeでコンテナを作ってみる](#docker-composeでコンテナを作ってみる)
-    - [Docker Compsoseファイルを作成する](#docker-composeファイルを作成する)
+- [DockerfileとDocker Composeで自作コンテナを作ってみる](#dockerfileとdocker-composeでコンテナを作ってみる)
+    - [1. 作成したいコンテナの情報を整理する](#1-作成したいコンテナの情報を整理する)
+        - [Dockerfileに記述できる主な命令](#dockerfileに記述できる主な命令)
+    - [2. Docker Composeファイルを作成する](#2-docker-composeファイルを作成する)
+    - [3. コマンドを使ってコンテナを作成・実行する](#3-コマンドを使ってコンテナを作成実行する)
+    - [Docker Composeを使わない場合]()
 - VSCode+Dockerで開発環境を構築
     - 拡張機能のインストール
     - VSCodeで実行するプログラム環境をコンテナにする
@@ -128,35 +130,29 @@ docker container rm python-test
 
 </br>
 
-# Docker Composeでコンテナを作ってみる
-このセクションでは実際にDocker ComposeでApacheコンテナを作成する．
-（とりあえず作ってみることが目的なので，詳しいことは理解しなくてもOK．）
+# DockerfileとDocker Composeで自作コンテナを作成する
+このセクションでは，実際にDockerfileとDocker Composeを使ってカスタムされたコンテナを作成する．
+コンテナ作成の手順は以下の通り．
 
-- 作成するApacheコンテナの情報
-    | コンテナ作成に必要な項目 | 設定値 |
-    | ----- | ----- |
-    | 使用するイメージ | httpd（バージョンは2.4） |
-    | ポート番号 | 8080.80 |
+1. [作成したいコンテナの情報を整理する](#1-作成したコンテナの情報を整理する)
+2. [Docker Composeファイルを作成する](#2-docker-composeファイルを作成する)
+3. [コマンドを使ってコンテナを作成・実行する](#3-コマンドを使ってコンテナを作成実行する)
 
-## Docker Composeファイルを作成する
-Docker Composeでコンテナを作るには`compose.yaml`が必要．
-デフォルトではカレントディレクトリにある`compose.yaml`が読み込まれ，
-Docker Composeのプロジェクト名にはカレントディレクトリの名前が使用される．
+## 1. 作成したいコンテナの情報を整理する
+まずはじめに，作成したいコンテナに必要なソフトウェアを整理する．
+ここでは，PythonをJupyterLabで実行可能な環境を構築し，
+Matplotlibを使ってNumpyでの計算結果を出力する場合を想定する．
+つまり，必要なソフトウェアは以下の通り．
 
-- ディレクトリの構造
-    <pre>
-    .
-    └── apache
-        └── compose.yaml
-    </pre>
+##### DockerHubから
+- Pythonイメージ（DockerHubから）
+##### pipを使ってインストール
+- JupyterLab
+- Matplotlib
+- Numpy
 
 
-</br>
-
-# Dockerfileでイメージを作ってみる
-Dockerfileとは．．．
-
-## Dockerfileに記述できる主な命令
+### Dockerfileに記述できる主な命令
 | 命令 | 意味 |
 | --- | --- |
 | `FROM`       | 元となるイメージを指定する |
@@ -168,6 +164,26 @@ Dockerfileとは．．．
 | `ENTRYPOINT` | コンテナの起動時に実行するコマンド．基本的にコマンドの上書きはできない |
 | `WORKDIR`    | 作業ディレクトリを指定する．ディレクトリが存在しない場合，ディレクトリを作成． |
 
+
+## 2. Docker Composeファイルを作成する
+
+hoge
+
+Docker Composeでコンテナを作るには`compose.yaml`が必要．
+デフォルトではカレントディレクトリにある`compose.yaml`が読み込まれ，
+Docker Composeのプロジェクト名にはカレントディレクトリの名前が使用される．
+
+
+## 3. コマンドを使ってコンテナを作成・実行する
+
+hoge
+
+
+
+
+
+
+### Docker Composeを使わない場合
 
 </br>
 
