@@ -62,6 +62,7 @@ Dockerとは，[コンテナ](#コンテナとは)を作成・実行するため
 起動されたシェル（bash）で，pythonを対話型で起動し，素敵な足し算をさせた例を以下に示す．
 
 - pythonを対話型で起動
+
     <img src='./figures/container_run.png' width=600px>
 
 対話型で起動したpythonは`exit()` or `Ctrl+D`，bashは`exit` or `Ctrl+D`で終了できる．
