@@ -1,0 +1,9 @@
+services:
+  test:
+    build: .
+    ports:
+      - "10000:8888"
+    volumes:
+      - ./src:/usr/src/app
+    command:
+      jupyter-lab --ip=0.0.0.0 --allow-root --IdentityProvider.token='' 
