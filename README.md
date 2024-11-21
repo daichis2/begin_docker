@@ -314,7 +314,7 @@ docker compose down
 
 ### Dockerfileのみを使う場合
 ここまで説明したように，1つのコンテナのみを使う場合は，Dockerfileのみで（Docker Composeを使わずに）コンテナを作成できる．
-「[1. 作成したいコンテナの情報を整理する](#1-作成したいコンテナの情報を整理する)」と同様のDockerfileのみが存在する場合，ターミナルに入力するコマンドは`docker composer up -d`の代わりに，以下のようになる．
+「[1. Dockerfileで作成したいコンテナの情報を整理する](#1-dockerfileで作成したいコンテナの情報を整理する)」と同様のDockerfileのみが存在する場合，ターミナルに入力するコマンドは`docker composer up -d`の代わりに，以下のようになる．
 
 -  イメージを作成
     ```
@@ -505,6 +505,7 @@ Select Features，Optional Files/Directoriesは何も選択せずOKを押す．
 `app.ipynb`のセルを`Shift+Enter`または「︎▶」で実行する．
 （初回はここで，PythonやJupyter関連の拡張機能のインストールを勧められるので，すべてインストール．）
 
+---
 #### Step 9.
 
 「**Python Environments...**」，「**Python 3.10.15**」（Global Envと表示されているもの） の順に選択．
