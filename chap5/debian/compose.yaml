@@ -1,4 +1,0 @@
-services:
-  debian:
-    image: debian:11.3
-    tty: true

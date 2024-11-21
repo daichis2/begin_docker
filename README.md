@@ -19,20 +19,32 @@
     - [コンテナ内のデータの永続化](#コンテナ内のデータの永続化)
         - [方法1: バインドマウント](#方法1-バインドマウント)
         - [方法2: ボリューム](#方法2-ボリューム)
-- VSCode+Dockerで開発環境を構築
-    - 拡張機能のインストール
-    - VSCodeで実行するプログラム環境をコンテナにする
+- [Visual Studio Code + Dockerで開発環境を構築](#visual-studio-code--dockerで開発環境を構築)
+    - [拡張機能のインストール](#拡張機能のインストール)
+    - [VSCodeでコンテナに接続する](#vscodeでコンテナに接続する)
 
 </br>
 
 # Dockerとは
 Dockerとは，[コンテナ](#コンテナとは)を作成・実行するためのソフトウェア．（は？）
 
+- [公式ロゴ](https://www.docker.com/ja-jp/company/newsroom/media-resources/)
+
+    <img src='./figures/docker-logo-blue.png' width=500px>
+
+</br>
+
 ## コンテナとは
 コンテナとは，**「アプリ&ファイルシステムを隔離する特殊なプロセス」** のこと．
 （**プロセス**とは，OS上で動作している１つ１つの処理（動作中の個々のプログラム）のこと．）
 
-要するに，コンテナ技術を使うことで，**そのプロセスの中だけが別マシンで動いているような状態になる** ．
+要するに，コンテナ技術を使うことで，**そのプロセスの中だけが別マシンで動いているような状態になる** ということ．
+
+- [コンテナのイメージ](https://www.sbbit.jp/article/cont1/57184)
+
+    <img src='./figures/what_container.jpg' width=500px>
+
+</br>
 
 # Dockerの基本的な使用手順
  Dockerの基本的な使用手順は以下の通り．
@@ -46,6 +58,8 @@ dockerコマンドはすべて `docker 対象 操作`（例えば`dokcer contain
 
 - Docker基本コマンド  
     <img src='./figures/docker_summary01.png' width=500px>
+
+</br>
 
 ## コンテナを作成
 ここでは，Pythonをインストールしたコンテナを作成し，対話型で起動してみる．
@@ -72,6 +86,8 @@ dockerコマンドはすべて `docker 対象 操作`（例えば`dokcer contain
 
 対話型で起動したpythonは`exit()` or `Ctrl+D`，bashは`exit` or `Ctrl+D`で終了できる．
 
+</br>
+
 ## コンテナを停止
 以下のコマンドを入力．`python-test`の部分は停止したいコンテナの名前．
 ```
@@ -92,6 +108,7 @@ docker container stop python-test
     | `PORTS` | 紐づいているポート番号 |
     | `NAMES` | コンテナの名前 |
 
+</br>
 
 ## コンテナを削除
 以下のコマンドを入力．`python-test`の部分は削除したいコンテナの名前．
@@ -105,17 +122,10 @@ docker container rm python-test
 ただし，コンテナを削除するとコンテナ内のデータも削除されるため，必要なデータは，ファイルのバインドマウントなどで，[データを永続化](#コンテナ内のデータの永続化)する必要がある．
 
 #### Note
-- イメージやコンテナが増えてくるとストレージを圧迫するため，不要なものはその都度削除する（DockerHubやDockerfileから簡単に再現できるため）
-- ローカルでの開発用途の利用であれば停止したコンテナを再利用するケースは一応あるけど...
-
-
-
-
-### Note
 - dockerコマンドには**古い書き方（例えば`docker container run`ではなく`docker run`，`docker image pull`ではなく`docker pull`など）が存在**
-- **Docker ComposeにもV1とV2が存在**
-    - コマンドはV1では`docker-compose`，V2では`docker compose`
-    - yamlファイルの名前はV1では`docker-compose.yaml`が使われていたが，V2では`compose.yaml`が推奨されている
+- イメージやコンテナが増えてくるとストレージを圧迫するため，不要なものはその都度削除する（DockerHubやDockerfileから簡単に再現できるため）
+- ローカルでの開発用途の利用であれば停止したコンテナを再利用するケースは一応ある...
+
 
 
 </br>
@@ -127,6 +137,8 @@ docker container rm python-test
 1. [作成したいコンテナの情報を整理する](#1-作成したコンテナの情報を整理する)
 2. [Docker Composeファイルを作成する](#2-docker-composeファイルを作成する)
 3. [コマンドを使ってコンテナを作成・実行する](#3-コマンドを使ってコンテナを作成実行する)
+
+</br>
 
 ## 1. Dockerfileで作成したいコンテナの情報を整理する
 まずはじめに，作成したいコンテナに必要なソフトウェアを整理する．
@@ -170,6 +182,7 @@ Matplotlibを使ってNumpyでの計算結果を出力する場合を想定す�
 | `ENTRYPOINT` | コンテナの起動時に実行するコマンド．基本的にコマンドの上書きはできない |
 | `WORKDIR`    | コンテナの作業ディレクトリを指定する．ディレクトリが存在しない場合，ディレクトリを作成． |
  
+ </br>
 
 ## 2. Docker Composeファイルを作成する
 Docker Composeでコンテナを作るには`compose.yaml`が必要．
@@ -228,7 +241,12 @@ jupyter
 
 #### Note
 - 「[0.0.0.0にはアクセスしないこと](https://qiita.com/amuyikam/items/0063df223aed40193ba9)」
+- Docker ComposeにはV1とV2が存在
+    - コマンドはV1では`docker-compose`，V2では`docker compose`
+    - yamlファイルの名前はV1では`docker-compose.yaml`が使われていたが，V2では`compose.yaml`が推奨されている
 - webサイトなどの`compose.yaml`で先頭に`version: "3"`（Docker Composeのバージョンを表す項目）と記述がされていることがあるが，現在ではDocker広域ドキュメント上で非推奨になっている
+
+</br>
 
 ### `services`の主な項目
 | 名前 | 意味 |
@@ -315,7 +333,7 @@ docker compose down
     docker image rm jupyter-test
     ```
 
-
+</br>
 
 ## Docker Composeで複数コンテナを一度に作成
 このセクションでは，WordPress+MariaDBのコンテナを構築する．
@@ -375,6 +393,7 @@ WordPressはデータベースに接続しないと使用できないため，�
 | `WORDPRESS_DB_USER` | 接続先データベースのユーザー名 |
 | `WORDPRESS_DB_PASSWORD` | 接続先データベースのパスワード |
 
+</br>
 
 ## コンテナ内のデータの永続化
 ここまでの説明では，コンテナ内のデータを暗黙的に永続化してきたが，本来はコンテナを削除するとコンテナ内のデータも削除される．
@@ -410,3 +429,22 @@ WordPressはデータベースに接続しないと使用できないため，�
     volumes:
       ボリューム名
     ```
+</br>
+
+# Visual Studio Code + Dockerで開発環境を構築
+まず[Visual Studio Code](https://code.visualstudio.com/)をインストール．
+Visual Studio Code（以下VSCode）は，Microsoftが開発したコードエディタ．
+軽い．拡張機能がGUIで簡単にインストール・アンインストールできるのでその管理も楽．
+このセクションでは，VSCodeとDockerを使って開発環境を構築する．
+
+## 拡張機能のインストール
+まず，VSCodeの拡張機能をインストールする．
+画面左端のExtensions（日本語化した場合は拡張機能）の検索欄で拡張機能を検索&インストールできる．
+ここでインストールする拡張機能は以下．
+
+- Docker
+- Dev Containers
+- Python
+
+## VSCodeでコンテナに接続する
+がんばろー

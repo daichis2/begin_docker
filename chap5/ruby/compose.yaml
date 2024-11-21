@@ -1,6 +1,0 @@
-services:
-  ruby:
-    image: ruby:3.0
-    tty: true
-    volumes:
-      - ./src:/src
