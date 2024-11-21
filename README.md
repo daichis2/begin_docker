@@ -154,7 +154,7 @@ Matplotlibを使ってNumpyでの計算結果を出力する場合を想定す�
 - Numpy
 
 これらを使ってイメージを作成するためのDockerfileは以下の通り．
-- `Dockerfile`
+- `jupyter/Dockerfile`
 
     ```Dockerfile
     FROM python:3.10
@@ -203,7 +203,7 @@ jupyter
 [ここまでで作成したDockerfile](#1-作成したいコンテナの情報を整理する)を用いて，コンテナを作成するための`compose.yaml`は以下の通り．
 インデンントには
 
-- `compose.yaml`
+- `jupyter/compose.yaml`
 
     ```yaml
     services:
@@ -347,7 +347,8 @@ WordPressは有名なCMS (Contents Management System)であり，WordPressを実
 以下に示す`compose.yaml`では，WordPressコンテナの`depends_on`に`db`と書いているので，`docker compose up -d`を実行すると，MariaDBコンテナ，WordPressコンテナの順に作成される．
 WordPressはデータベースに接続しないと使用できないため，このように`depends_on`を使って制御する．
 
-- `compose.yaml`
+- `wordpress/compose.yaml`
+
     ```yaml
     services:
       db:  # MariaDBのコンテナ
