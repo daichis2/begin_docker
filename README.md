@@ -14,11 +14,11 @@
     - [3. Docker Composeコマンドを使ってコンテナを作成&実行する](#3-docker-composコマンドを使ってコンテナを作成実行する)
         - [起動したJupyter Labにアクセス](#起動したjupyter-labにアクセス)
         - [Docker Composeで作成したコンテナを停止&削除](#docker-composeで作成したコンテナを停止削除)
+        - [Dockerfileのみを使う場合](#dockerfileのみを使う場合)
+    - [Docker Composeで複数コンテナを一度に作成](#docker-composeで複数コンテナを一度に作成)
     - [コンテナ内のデータの永続化](#コンテナ内のデータの永続化)
-        - [方法1: ボリューム](#方法1-ボリューム)
-        - [方法2: バインドマウント](#方法2-バインドマウント)
-    - [Dockerfileのみを使う場合](#dockerfileのみを使う場合)
-    - [Docker Composeのみを使う場合](#docker-composeのみを使う場合)
+        - [方法1: バインドマウント](#方法1-バインドマウント)
+        - [方法2: ボリューム](#方法2-ボリューム)
 - VSCode+Dockerで開発環境を構築
     - 拡張機能のインストール
     - VSCodeで実行するプログラム環境をコンテナにする
@@ -213,8 +213,22 @@ jupyter
 | `test` | コンテナ名．ここでは`test`という名前にしているが，任意の名前をつけられる．|
 | `build` | ビルドに使うファイルを指定．ここではカレントディレクトリ`.`にあるDockerfileを使う．
 | `ports` | Dockerホストとコンテナのポート番号の紐付け．「ホストのポート番号:コンテナのポート番号」．ここでは，ホストのポート番号は`10000`で，jupyterコンテナのポート番号が`8888`．
-| `volumes` | [バインドマウント](#方法2-バインドマウント)の設定．「マウントするホストのディレクトリ:コンテナのディレクトリ」．ここでは，ホストの`./src`をコンテナの`/usr/src/app`にマウントする． |
+| `volumes` | [バインドマウント](#方法1-バインドマウント)の設定．「マウントするホストのディレクトリ:コンテナのディレクトリ」．ここでは，ホストの`./src`をコンテナの`/usr/src/app`にマウントする． |
 | `command` | コンテナの起動時に実行するデフォルトのコマンドを上書きする． |
+
+---
+※ `jupyter-lab --ip=0.0.0.0 --allow-root --IdentityProvider.token=''`は，JupyterLabを起動するためのオプションを含むコマンド．  
+| オプション | 意味 |
+| --- | --- |
+| `--ip 0.0.0.0` |  IPアドレスを0.0.0.0に指定．指定しないとJupyter起動時に例外が送出された起動に失敗する．|
+| `--allow-root` | rootでの実行は非推奨とされているため，このオプションをつけないと起動に失敗する． |
+| `--IdentityProvider.token=''` | Jupyterにアクセスした際のトークンを指定．ここではトークンなしに指定している．この項目を入力しなければ，Jupyterを起動したコンソール上にトークンが表示される（バックグラウンドで起動すると表示されないため注意）． |
+---
+
+
+#### Note
+- 「[0.0.0.0にはアクセスしないこと](https://qiita.com/amuyikam/items/0063df223aed40193ba9)」
+- webサイトなどの`compose.yaml`で先頭に`version: "3"`（Docker Composeのバージョンを表す項目）と記述がされていることがあるが，現在ではDocker広域ドキュメント上で非推奨になっている
 
 ### `services`の主な項目
 | 名前 | 意味 |
@@ -235,18 +249,6 @@ jupyter
 | `tty` | 擬似端末の配置 |
 | `working_dir` | デフォルトの作業ディレクトリ |
 
----
-※ `jupyter-lab --ip=0.0.0.0 --allow-root --IdentityProvider.token=''`は，JupyterLabを起動するためのオプションを含むコマンド．  
-| オプション | 意味 |
-| --- | --- |
-| `--ip 0.0.0.0` |  IPアドレスを0.0.0.0に指定．指定しないとJupyter起動時に例外が送出された起動に失敗する．|
-| `--allow-root` | rootでの実行は非推奨とされているため，このオプションをつけないと起動に失敗する． |
-| `--IdentityProvider.token=''` | Jupyterにアクセスした際のトークンを指定．ここではトークンなしに指定している．この項目を入力しなければ，Jupyterを起動したコンソール上にトークンが表示される（バックグラウンドで起動すると表示されないため注意）． |
----
-
-#### Note
-- 「[0.0.0.0にはアクセスしないこと](https://qiita.com/amuyikam/items/0063df223aed40193ba9)」
-- webサイトなどの`compose.yaml`で先頭に`version: "3"`（Docker Composeのバージョンを表す項目）と記述がされていることがあるが，現在ではDocker広域ドキュメント上で非推奨になっている
 
 ## 3. Docker Composコマンドを使ってコンテナを作成&実行する
 `compose.yaml`があるディレクトリで，以下のコマンドを入力することで，Docker composeを使ってコンテナを作成する．
@@ -291,21 +293,9 @@ docker compose down
 | `-v` | Docker Composeファイルの`volumes`に記載したボリュームと，コンテナにアタッチされた匿名ボリュームを削除 |
 | `--remove-orphans` | Docker Composeで定義されていないコンテナも削除 |
 
-## コンテナ内のデータの永続化
 
-### 方法1: ボリューム
-**ボリューム**は，Dockerが管理する記憶領域にデータを永続化する仕組み．
-データを変更する際は，データを直接操作するのではなく，コンテナを通して行う．
-そのため，データベースのデータなど，**直接変更することのないデータ**に向いている．
-
-### 方法2: バインドマウント
-**バインドマウンド**は，ホストOSのフォルダーやファイルをマウントする仕組み．
-データを変更する際は，ホストOSのファイルを直接変更することで，コンテナ内にも自動で反映される．
-そのため，**変更頻度の高いデータ**に向いている．
-
-
-## Dockerfileのみを使う場合
-ここまで説明したように，1つのコンテナのみを使う場合は，Dockerfileのみで（Docker eを使わずに）コンテナを作成できる．
+### Dockerfileのみを使う場合
+ここまで説明したように，1つのコンテナのみを使う場合は，Dockerfileのみで（Docker Composeを使わずに）コンテナを作成できる．
 「[1. 作成したいコンテナの情報を整理する](#1-作成したいコンテナの情報を整理する)」と同様のDockerfileのみが存在する場合，ターミナルに入力するコマンドは`docker composer up -d`の代わりに，以下のようになる．
 
 -  イメージを作成
@@ -325,11 +315,98 @@ docker compose down
     docker image rm jupyter-test
     ```
 
-毎回打つのめんどくさい．
 
 
-## Docker Composeのみを使う場合
-逆にDockerfileが不要な場合もある．
-今回は，pipでインストールするものがあったため，Dockerfileが必要だったが，特にカスタマイズせずにコンテナイメージのみで事足りる場合は`compose.yaml`にイメージを直接指定してコンテナを作成することができる．
+## Docker Composeで複数コンテナを一度に作成
+このセクションでは，WordPress+MariaDBのコンテナを構築する．
+WordPressは有名なCMS (Contents Management System)であり，WordPressを実行するためにはデータベース（MySQLまたはMariaDB）が必要なため， MariaDBのコンテナもあわせて作成する．
+
+今回使用するイメージは以下の2つ．
+- wordpress
+- mariadb
+
+複数コンテナを利用する際のポイントとして，`depends_on`の利用があり，これはコンテナ間の依存関係を設定する項目．
+以下に示す`compose.yaml`では，WordPressコンテナの`depends_on`に`db`と書いているので，`docker compose up -d`を実行すると，MariaDBコンテナ，WordPressコンテナの順に作成される．
+WordPressはデータベースに接続しないと使用できないため，このように`depends_on`を使って制御する．
+
+- `compose.yaml`
+    ```yaml
+    services:
+      db:  # MariaDBのコンテナ
+        image: mariadb:10.7  # 使用するイメージ
+        environment:  # 環境変数
+          MARIADB_ROOT_PASSWORD: rootpass
+          MARIADB_DATABASE: wordpress
+          MARIADB_USER: wordpress
+          MARIADB_PASSWORD: wordpress
+        volumes:
+          - db-data:/var/lib/mysql
+      wordpress:  # WordPressのコンテナ
+        image: wordpress:6.0  # 使用するイメージ
+        depends_on:
+          - db
+        environment:  # 環境変数
+          WORDPRESS_DB_HOST: db  # MariaDBのコンテナ名
+          WORDPRESS_DB_NAME: wordpress  # MariaDBのデータベース名
+          WORDPRESS_DB_USER: wordpress  # MariaDBのユーザー名
+          WORDPRESS_DB_PASSWORD: wordpress  # MariaDBのパスワード
+        ports:
+          - "8080:80" 
+        volumes:
+          - ./html:/var/www/html
+    volumes:
+      db-data:
+      wordpress-data:
+    ```
+
+以上のファイルがあるディレクトリで，`docker compose up -d`を実行した後，ブラウザで`http://localhost:8080/`へアクセスし，WordPressのトップページが表示されたらOK．
+
+※ **今回はコンテナのカスタマイズはしていないので，Dockerfileは作成していない．**
+
+- WordPressトップページ
+
+    <img src='./figures/wordpress_toppage.png' width=700px>
+
+#### WordPressイメージの主な環境変数
+| 環境変数 | 意味 |
+| --- | --- |
+| `WORDPRESS_DB_HOST` | 接続先のコンテナ名．`compose.yaml`で定義した名前を設定する． |
+| `WORDPRESS_DB_NAME` | 接続先データベースのデータベース名 |
+| `WORDPRESS_DB_USER` | 接続先データベースのユーザー名 |
+| `WORDPRESS_DB_PASSWORD` | 接続先データベースのパスワード |
 
 
+## コンテナ内のデータの永続化
+ここまでの説明では，コンテナ内のデータを暗黙的に永続化してきたが，本来はコンテナを削除するとコンテナ内のデータも削除される．
+「[2. Docker Composeファイルを作成する](#2-docker-composeファイルを作成する)」での`compose.yaml`では[バインドマウント](#方法1-バインドマウント)，
+「[Docker Composeで複数コンテナを一度に作成](#docker-composeで複数コンテナを一度に作成)」の`compose.yaml`では，[ボリューム](#方法2-ボリューム)を使って永続化している．
+
+### 方法1: バインドマウント
+**バインドマウンド**は，ホストOSのフォルダーやファイルをマウントする仕組み．
+データを変更する際は，ホストOSのファイルを直接変更することで，コンテナ内にも自動で反映される．
+そのため，**変更頻度の高いデータ**に向いている．
+
+- バインドマウンドによる永続化
+    ```yaml
+    services:
+      コンテナ名:
+        image: 使用するイメージ名
+        volumes:
+          - ホストOSのフォルダー:コンテナ内のパス
+    ```
+
+### 方法2: ボリューム
+**ボリューム**は，Dockerが管理する記憶領域にデータを永続化する仕組み．
+データを変更する際は，データを直接操作するのではなく，コンテナを通して行う．
+そのため，データベースのデータなど，**直接変更することのないデータ**に向いている．
+
+- ボリュームによる永続化
+    ```yaml
+    services:
+      コンテナ名:
+        image: 使用するイメージ名
+        volumes:
+          - 以下の`volumes`に定義したボリューム名:コンテナ内のパス
+    volumes:
+      ボリューム名
+    ```
