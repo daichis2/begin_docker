@@ -429,6 +429,7 @@ WordPressはデータベースに接続しないと使用できないため，�
     volumes:
       ボリューム名
     ```
+
 </br>
 
 # Visual Studio Code + Dockerで開発環境を構築
@@ -438,13 +439,90 @@ Visual Studio Code（以下VSCode）は，Microsoftが開発したコードエ�
 このセクションでは，VSCodeとDockerを使って開発環境を構築する．
 
 ## 拡張機能のインストール
-まず，VSCodeの拡張機能をインストールする．
+まず，VSCodeの拡張機能（Dev Containers）をインストールする．
 画面左端のExtensions（日本語化した場合は拡張機能）の検索欄で拡張機能を検索&インストールできる．
-ここでインストールする拡張機能は以下．
 
-- Docker
 - Dev Containers
-- Python
+
+  <img src='./figures/vscode/dev_containers.png' width=700px>
 
 ## VSCodeでコンテナに接続する
-がんばろー
+VSCodeとコンテナを接続するにはいくつか方法があるが，ここでは，`compose.yaml`から作成する方法を紹介する．
+
+</br>
+
+---
+#### Step 1. 
+はじめにVSCodeのコマンドパレットを開く．Windowsでは`Ctrl+Shift+p`，Macでは`cmd+shift+p`．
+
+<img src='./figures/vscode/command_pallete.png' width=500px>
+
+---
+#### Step 2. 
+コマンドパレット上で`dev containers open`と入力し，「`Dev Containers :Open Folder in Container `」を選択．
+
+<img src='./figures/vscode/dev_containers_open.png' width=500px>
+
+---
+#### Step 3. 
+`compose.yaml`があるディレクトリを選択しOpen．ここでは「[DockerfileとDocker Composeで自作コンテナを作成する](#dockerfileとdocker-composeで自作コンテナを作成する)」で使った`jupyter`ディレクトリを使用する．
+
+<img src='./figures/vscode/open_folder.png' width=500px>
+
+---
+#### Step 4. 
+Add Dev Container Configuation Filesで，「**Add configuration to workspace**」を選択
+
+<img src='./figures/vscode/add_config.png' width=500px>
+
+---
+#### Step 5. 
+次に，『**From compose.yaml**』を選択．
+
+<img src='./figures/vscode/from_compose.png' width=500px>
+
+---
+#### Step 6. 
+Select Features，Optional Files/Directoriesは何も選択せずOKを押す．
+
+<img src='./figures/vscode/select_features.png' width=500px>
+  
+<img src='./figures/vscode/optional_files.png' width=500px>
+
+---
+#### Step 7. 
+
+初回はイメージのプルとコンテナの作成が行われるため，少し時間がかかる．
+ビルドが終わると，選択したフォルダが表示され，ファイルを選択できるようになる．
+加えて，`.devcontainer`というフォルダが作成される．
+これは，コンテナ接続のために必要なファイルが配置されるためのフォルダのため消さないように．
+
+<img src='./figures/vscode/ipynb_preview.png'>
+
+---
+#### Step 8.
+`app.ipynb`のセルを`Shift+Enter`または「︎▶」で実行する．
+（初回はここで，PythonやJupyter関連の拡張機能のインストールを勧められるので，すべてインストール．）
+
+#### Step 9.
+
+「**Python Environments...**」，「**Python 3.10.15**」（Global Envと表示されているもの） の順に選択．
+
+- Python Envirionmentsを選択
+
+    <img src='./figures/vscode/select_pythonenv.png'>
+
+- Python 3.10.15を選択
+
+    <img src='./figures/vscode/select_kernel.png'>
+
+---
+#### Step 10.
+カーネルを選択すると，セルの実行が開始し，下にグラフが表示される．
+
+- 出力結果
+
+    <img src='./figures/vscode/plot_result.png'>
+
+---
+#### おしまい
